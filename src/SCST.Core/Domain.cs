@@ -71,7 +71,7 @@ public class Tramite : Record
         Year = Reception.Year;
     }
     public Traffic? Signal(DateOnly today, bool pending) => !pending ? null : (today.DayNumber - Reception.DayNumber) switch { <=15 => Traffic.Verde, <=30 => Traffic.Amarillo, _ => Traffic.Rojo };
-    public bool DateWarning(DateOnly today) => new DateOnly?[]{Reception,Assignment,ValidatorResponse,SourceCapture,Issue,WindowResponse,Conclusion,ValidationDate}.Any(d=>d>today) || new[]{Assignment,ValidatorResponse,Issue,WindowResponse,Conclusion,ValidationDate}.Any(d=>d<Reception);
+    public bool DateWarning(DateOnly today) => new DateOnly?[]{Reception,ValidatorResponse,SourceCapture,Issue,WindowResponse}.Any(d=>d>today) || new[]{ValidatorResponse,Issue,WindowResponse}.Any(d=>d<Reception);
 }
 public class FollowUp : Record
 {

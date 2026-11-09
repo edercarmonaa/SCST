@@ -32,6 +32,7 @@ public class TramiteService(Database db)
     public async Task<int> Save(Tramite input,Actor actor,bool confirmDates=false)
     {
         Access.RequireWrite(actor.Role); input.Normalize();
+        input.Conclusion=input.WindowResponse;
         if(input.Validation.HasValue && !Enum.IsDefined(input.Validation.Value))throw new DomainException("Resultado de validación documental inválido.");
         if(input.DateWarning(DateOnly.FromDateTime(DateTime.Today)) && !confirmDates) throw new DomainException("Hay fechas futuras o anteriores a la recepción. Revise y confirme la advertencia.");
         if(await db.Tramites.IgnoreQueryFilters().AnyAsync(x=>x.Folio==input.Folio && x.Id!=input.Id)) throw new DomainException("El folio ya existe, incluso en papelera.");

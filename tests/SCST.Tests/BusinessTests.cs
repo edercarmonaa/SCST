@@ -36,6 +36,18 @@ public class BusinessTests : IAsyncLifetime
         await service.SaveOficio(o,actor with{Role=Role.Capturista});Assert.Single(await db.Oficios.ToListAsync());Assert.Empty(await db.Tramites.ToListAsync());Assert.Empty(await db.Links.ToListAsync());
     }
     [Fact]public async Task CreatesNormalizesAndPreservesFolio(){var t=Valid();await service.Save(t,actor);Assert.Equal("0001",t.Folio);Assert.Equal("JOSÉ ÑANDÚ",t.Names);Assert.Equal(2026,t.Year);Assert.Single(await db.Audits.ToListAsync());}
+    [Fact]public async Task ConclusionFollowsWindowResponseOnCreateEditAndClear()
+    {
+        var t=Valid();t.WindowResponse=new(2026,1,12);t.Conclusion=new(2026,1,20);
+        await service.Save(t,actor);
+        Assert.Equal(t.WindowResponse,(await db.Tramites.AsNoTracking().SingleAsync()).Conclusion);
+        db.ChangeTracker.Clear();t=await db.Tramites.AsNoTracking().SingleAsync();t.WindowResponse=new(2026,1,15);
+        await service.Save(t,actor);
+        Assert.Equal(t.WindowResponse,(await db.Tramites.AsNoTracking().SingleAsync()).Conclusion);
+        db.ChangeTracker.Clear();t=await db.Tramites.AsNoTracking().SingleAsync();t.WindowResponse=null;
+        await service.Save(t,actor);
+        Assert.Null((await db.Tramites.AsNoTracking().SingleAsync()).Conclusion);
+    }
     [Fact]public async Task SearchesUnicodeFoliosWithoutCaseSensitivity()
     {
         var cs=$"Data Source={Guid.NewGuid()};Mode=Memory;Cache=Shared";await using var keeper=new SqliteConnection(cs);await keeper.OpenAsync();
