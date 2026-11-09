@@ -1,0 +1,19 @@
+# Seguridad
+
+La configuración inicial no incluye usuario o contraseña predeterminados. Las contraseñas se almacenan con `PasswordHasher<User>` de ASP.NET Core. Se aceptan frases de 12 a 512 caracteres y se rechaza una lista local básica de contraseñas comunes. La lista inicial es pequeña; debe ampliarse con una lista institucional aprobada antes de una política de contraseñas más exigente. No se imponen combinaciones arbitrarias de símbolos.
+
+Cookie Authentication utiliza HttpOnly, SameSite Strict, expiración deslizante de 30 minutos y Secure cuando la solicitud usa HTTPS. La modalidad inicial usa HTTP exclusivamente en loopback. Data Protection persiste claves fuera de binarios y las cifra con DPAPI de la cuenta Windows. Cada solicitud autenticada valida activo y SecurityStamp contra la base. Cinco intentos erróneos bloquean la cuenta 15 minutos. El mensaje no distingue entre usuario inexistente, contraseña incorrecta y bloqueo.
+
+Los formularios Razor POST llevan antifalsificación. La salida HTML se codifica mediante Razor, las consultas EF son parametrizadas y el servidor comprueba permisos. No se utilizan `Html.Raw` para datos de usuario. XLSX se genera con valores de celda, sin convertir entradas en fórmulas. La CSP permite scripts, estilos e imágenes locales y prohíbe objetos y formularios externos. Se incluyen nosniff, Referrer-Policy y SAMEORIGIN. El Host solo admite localhost y 127.0.0.1 para reducir exposición por DNS rebinding.
+
+La carga de Excel está limitada a 20 MB y 20 000 registros. Su vista previa queda en Temp con identificador aleatorio ligado al usuario y caduca a las 24 horas. Los nombres de descargas de respaldo se validan para impedir recorrido de directorios. La vista previa contiene datos personales: queda bajo los mismos permisos del almacenamiento local, no en wwwroot.
+
+La auditoría administrativa se conserva en SQLite y no tiene purga automática. Registra actor, acción, entidad, Id y folio cuando corresponde, sin hashes o contraseñas. Los logs técnicos usan ILogger y un proveedor de archivo con retención de 90 días. El proveedor persiste metadatos del evento y tipo de excepción, sin mensajes arbitrarios, estado ni excepciones completas; la consola suprime mensajes de frameworks para evitar filtrar detalles de las solicitudes. No se habilita SensitiveDataLogging de EF. El middleware de errores muestra una referencia de diagnóstico y no expone excepciones internas al navegador.
+
+Los respaldos emplean `AesGcm` del BCL con clave de 256 bits, nonce aleatorio de 96 bits y etiqueta de 128 bits, con cabecera autenticada de versión. DPAPI protege la copia local de la clave. El material de recuperación externo no se incluye en el respaldo. La base operativa no está cifrada: su protección en reposo depende de permisos Windows y de las medidas institucionales del equipo.
+
+La distribución de actualizaciones exige un manifiesto CMS firmado y el thumbprint del certificado autorizado. Un hash sin firma sirve para integridad, pero no demuestra autenticidad; update.ps1 exige ambas comprobaciones. El certificado institucional y el manual oficial de identidad no fueron suministrados.
+
+El 6 de noviembre de 2026 se identificaron dependencias transitivas SQLitePCLRaw 2.1.10 y PKCS 8.0.1 con avisos de seguridad. Se actualizaron a SQLitePCLRaw 3.0.2 y PKCS 9.0.22, junto con EF Core 9.0.22. La comprobación posterior `dotnet list package --vulnerable --include-transitive` no encontró avisos en los cuatro proyectos. Esto no equivale a una auditoría de penetración.
+
+Referencias: [política .NET](https://dotnet.microsoft.com/en-us/platform/support/policy), [aviso de SQLite](https://github.com/advisories/GHSA-2m69-gcr7-jv3q), [aviso PKCS](https://github.com/advisories/GHSA-846f-f764-76mx) y [distribución SQLitePCLRaw](https://github.com/ericsink/SQLitePCL.raw).

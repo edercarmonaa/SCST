@@ -1,0 +1,4 @@
+@page
+@model SCST.Web.Pages.Account.LoginModel
+@{ViewData["Title"]="Iniciar sesión";}
+<div class="panel login"><h2>Acceso al sistema</h2><p>Introduzca sus credenciales de acceso local.</p><div asp-validation-summary="All" class="text-danger" role="alert"></div><form method="post"><label>Usuario<input asp-for="Username" required autocomplete="username" autofocus/></label><label>Contraseña<input asp-for="Password" type="password" required autocomplete="current-password"/></label><button class="btn btn-primary w-100">Ingresar</button></form><p class="muted mt-3">La sesión se cerrará después de 30 minutos de inactividad.</p></div>

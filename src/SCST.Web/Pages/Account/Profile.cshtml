@@ -1,0 +1,4 @@
+@page
+@model SCST.Web.Pages.Account.ProfileModel
+@{ViewData["Title"]="Mi cuenta";}
+<div class="panel narrow"><div asp-validation-summary="All" class="text-danger"></div>@if(Model.RequiredChange){<div class="alert alert-warning">Debe sustituir su contraseña temporal para continuar.</div>}<form method="post" asp-page-handler="Name"><label>Nombre visible<input asp-for="Name" required/></label><button class="btn btn-secondary">Guardar nombre</button></form><hr/><h2>Cambiar contraseña</h2><form method="post"><label>Contraseña actual<input asp-for="CurrentPassword" type="password" autocomplete="current-password" required/></label><label>Nueva frase de contraseña<input asp-for="NewPassword" type="password" minlength="12" autocomplete="new-password" required/></label><button class="btn btn-primary">Cambiar y cerrar sesión</button></form></div>

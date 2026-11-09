@@ -1,0 +1,4 @@
+@page
+@model SCST.Web.Pages.Admin.SettingsModel
+@{ViewData["Title"]="Configuración";}
+<div class="panel narrow"><div asp-validation-summary="All" class="text-danger"></div><form method="post"><label>Dependencia<input asp-for="Input.Dependency" required/></label><label>Unidad administrativa<input asp-for="Input.Unit" required/></label><label>Área responsable<input asp-for="Input.Area" required/></label><label>Ejercicio general<input asp-for="Input.Year" required/></label><button class="btn btn-primary">Guardar configuración</button></form><p class="mt-3">Almacenamiento local: <code>@Model.Storage</code></p><p>La ubicación se establece mediante SCST_DATA antes de iniciar. Para trasladarla, detenga el sistema y siga el procedimiento de respaldo y recuperación.</p></div>

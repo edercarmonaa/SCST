@@ -1,0 +1,2 @@
+﻿. "$PSScriptRoot\common.ps1"
+try {dotnet restore (Join-Path $TaskRoot 'SCST.sln');if($LASTEXITCODE -ne 0){throw 'Falló la restauración de dependencias.'};dotnet build (Join-Path $TaskRoot 'SCST.sln') --no-restore;if($LASTEXITCODE -ne 0){throw 'Falló la compilación.'};dotnet test (Join-Path $TaskRoot 'SCST.sln') --no-build --no-restore;if($LASTEXITCODE -ne 0){throw 'Hay pruebas fallidas.'};Write-Host 'Verificación completada.';exit 0}catch{Write-Error $_.Exception.Message;exit 1}
